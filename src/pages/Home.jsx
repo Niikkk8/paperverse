@@ -1,4 +1,3 @@
-import Navigation from './../components/universal/Navigation';
 import HeroSection from './../components/homepage/HeroSection';
 import FeaturesSection from './../components/homepage/FeaturesSection';
 import ProcessSection from './../components/homepage/ProcessSection';
@@ -9,7 +8,6 @@ import ScrollToTop from './../components/universal/ScrollToTop';
 
 const LandingPage = () => (
     <div className="min-h-screen bg-white">
-        <Navigation />
         <HeroSection />
         <FeaturesSection />
         <ProcessSection />
