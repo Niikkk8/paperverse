@@ -1,14 +1,31 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS  # Add this import
 import google.generativeai as genai
 import PyPDF2
 import os
 
-app = Flask(_name_)
+app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 # Initialize Gemini with the provided API key
-API_KEY = "AIzaSyAMdyIzEABk0TVSHVcGr2hScT2LIYU5Bjs"
+API_KEY = "AIzaSyCpIDDX2iEFSaCfX19Sa3jNTWIVEVPmdtE"
 genai.configure(api_key=API_KEY)
-model = genai.GenerativeModel('gemini-pro')
+
+# Update to use an available model
+try:
+    model = genai.GenerativeModel('models/gemini-1.5-pro')  # Keep the model as specified
+except Exception as e:
+    print(f"Model initialization error: {str(e)}")
+    raise
+
+def generate_with_gemini(prompt, max_tokens=4096):
+    """Generate content using Gemini model with improved parameters"""
+    try:
+        response = model.generate_content(prompt)  # Keep as-is
+        return response.text
+    except Exception as e:
+        print(f"Detailed error in generate_with_gemini: {str(e)}")
+        raise Exception(f"Error generating content with Gemini: {str(e)}")
 
 def extract_text_from_pdf(pdf_path):
     """Extract text from a PDF file"""
@@ -25,22 +42,6 @@ def extract_text_from_pdf(pdf_path):
             return text.strip()
     except Exception as e:
         raise Exception(f"Error extracting text from PDF: {str(e)}")
-
-def generate_with_gemini(prompt, max_tokens=4096):
-    """Generate content using Gemini model with improved parameters"""
-    try:
-        response = model.generate_content(
-            prompt,
-            generation_config={
-                "temperature": 0.3,
-                "top_p": 0.9,
-                "top_k": 40,
-                "max_output_tokens": max_tokens
-            }
-        )
-        return response.text
-    except Exception as e:
-        raise Exception(f"Error generating content with Gemini: {str(e)}")
 
 def generate_summary(text):
     """Generate a more comprehensive and structured summary"""
@@ -103,7 +104,10 @@ def summarize_pdf():
     if file.filename == '':
         return jsonify({"error": "No selected file"}), 400
     
-    pdf_path = os.path.join("/tmp", file.filename)
+    # Create tmp directory if it doesn't exist
+    os.makedirs("tmp", exist_ok=True)
+    
+    pdf_path = os.path.join("tmp", file.filename)  # Use relative path
     file.save(pdf_path)
     
     try:
@@ -112,7 +116,7 @@ def summarize_pdf():
         
         print("\nExtracted Text:")
         print("-" * 80)
-        print(pdf_text)
+        print(pdf_text[:1000] + "..." if len(pdf_text) > 1000 else pdf_text)
         print("-" * 80)
         
         print("\nGenerating summary...")
@@ -120,7 +124,17 @@ def summarize_pdf():
         
         return jsonify({"summary": summary})
     except Exception as e:
+        print(f"Error processing request: {str(e)}")
         return jsonify({"error": str(e)}), 500
+    finally:
+        # Clean up the temporary file
+        if os.path.exists(pdf_path):
+            try:
+                os.remove(pdf_path)
+                print(f"Removed temporary file: {pdf_path}")
+            except Exception as e:
+                print(f"Error removing temporary file: {str(e)}")
 
-if _name_ == '_main_':
-    app.run(debug=True)
+if __name__ == '__main__':
+    print("Starting server...")
+    app.run(debug=True, host='0.0.0.0', port=5000)

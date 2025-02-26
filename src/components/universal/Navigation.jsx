@@ -18,7 +18,7 @@ const Navigation = () => {
     }, []);
 
     const navLinks = [
-        { name: 'Features', options: ['Podcast', 'Video', 'Presentation', 'Graphics'] },
+        { name: 'Features', options: ['Podcast', 'Video', 'Voicebot', 'Graphics'] },
         { name: 'Solutions', options: ['Research', 'Education', 'Publishing'] },
         { name: 'Resources', options: ['Documentation', 'API', 'Examples'] },
         { name: 'Pricing', options: ['Personal', 'Team', 'Enterprise'] }

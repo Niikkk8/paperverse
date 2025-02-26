@@ -13,8 +13,8 @@ const HeroSection = () => (
                     </span>
                 </h1>
                 <p className="text-xl md:text-2xl text-slate-300 mb-12 leading-relaxed">
-                    Convert complex academic papers into engaging presentations, podcasts,
-                    videos, and graphical abstracts using advanced AI technology
+                    Convert complex academic papers into engaging podcasts,
+                    videos, voicebots and graphical abstracts using advanced AI technology
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center gap-6">
                     <button className="bg-blue-600 text-white px-8 py-4 rounded-xl font-semibold flex items-center justify-center hover:bg-blue-700 transition-colors group">
